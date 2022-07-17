@@ -1,55 +1,60 @@
-// Program 1: (shmem.h) Producer – Consumer Problem Using Shared Memory.
-#include <sys/types.h>
-#include <sys/ipc.h>
-#include <sys/shm.h>
 #include <stdio.h>
-#include<stdlib.h>
-#include<unistd.h>
-#define PERMS 0666
-#define mkey 45787
+#include <stdlib.h>
 
+int mutex = 1, full = 0, empty = 10, x = 0;
 
-// Program 2: (sender.c) Producer – Consumer Problem Using Shared Memory.
-#include "shmem.h"
+void producer()
+{
+	--mutex;
+	++full;
+	--empty;
+	x++;
+	printf("Producer produces item %d\n", x);
+	++mutex;
+}
+void consumer()
+{
+	--mutex;
+	--full;
+	++empty;
+	printf("Consumber Consumed the item %d\n", x);
+	x--;
+	++mutex;
+}
+
 int main()
 {
-int shmemid,n;
-char *pshmem;
-if((shmemid=shmget(mkey,10,PERMS|IPC_CREAT))<0)
-{
-printf("\n Sender: Cant get shared memory");
-exit(1);
-}
-pshmem=shmat(shmemid,(char *) 0,0);
-if(pshmem < 0)
-{
-perror("Sender: Cant attach shared memory");
-exit(1);
-}
-n=read(0,pshmem,100);
-pshmem[n]='\0';
-exit(0);
-}
-
-
-// Program 3: (receiver.c) Producer – Consumer Problem Using Shared Memory.
-#include "shmem.h"
-int main()
-{
-int shmemid,n;
-char *pshmem;
-if((shmemid=shmget(mkey,10,PERMS|IPC_CREAT))<0)
-{
-printf("\nReceiver: Error opening shared memory");
-exit(1);
-}
-pshmem=shmat(shmemid,(char *) 0,0);
-if(pshmem < 0)
-{
-printf("\n Receiver : Can't attach shared memory");
-exit(1);
-}
-printf("%s",pshmem);
-shmctl(shmemid,IPC_RMID,NULL);
-exit(0);
+	int n, i;
+	for (i = 1; i > 0; i++)
+	{
+		printf("Enter 1. for producer\nEnter 2. for consumer\nEnter 3. to Exit\n:");
+		scanf("%d", &n);
+		switch (n)
+		{
+		case 1:
+			if ((mutex == 1) && (empty != 0))
+			{
+				producer();
+			}
+			else
+			{
+				printf("Buffer is full !! \n");
+			}
+			break;
+		case 2:
+			if ((mutex == 1) && (full != 0))
+			{
+				consumer();
+			}
+			else
+			{
+				printf("Buffer is empty !!\n");
+			}
+			break;
+		case 3:
+			exit(0);
+			break;
+		}
+	}
+	return 0;
 }
