@@ -1,4 +1,5 @@
 /* A program to simulate the Round Robin CPU scheduling algorithm */
+
 #include <stdio.h>
 struct process
 {
@@ -18,7 +19,7 @@ int main()
         p[i].f = 1;
     }
     printf("\nOrder Of Execution \n");
-    printf("\nProcess Starting Ending Remaining");
+    printf("\nProcess \tStarting   Ending   Remaining");
     printf("\n\t\tTime \tTime \t Time");
     while (flag == 1)
     {
@@ -28,33 +29,33 @@ int main()
             if (p[i].f == 1)
             {
                 flag = 1;
-j = quantum;
-if ((p[i].burst - p[i].comp) > quantum)
-{
-    p[i].comp += quantum;
-}
-else
-{
-    p[i].wait = time - p[i].comp;
-    j = p[i].burst - p[i].comp;
-    p[i].comp = p[i].burst;
-    p[i].f = 0;
-}
-printf("\nprocess # %-3d %-10d %-10d %-10d", i + 1, time, time + j, p[i].burst - p[i].comp);
-time += j;
-}
-}
-}
-printf("\n\n------------------");
-printf("\nProcess \t Waiting Time TurnAround Time ");
-for (i = 0; i < n; i++)
-{
-    printf("\nProcess # %-12d%-15d%-15d", i + 1, p[i].wait, p[i].wait + p[i].burst);
-    totalwait = totalwait + p[i].wait;
-    totalturn = totalturn + p[i].wait + p[i].burst;
-}
-printf("\n\nAverage\n------------------ ");
-printf("\nWaiting Time: %fms", totalwait / (float)n);
-printf("\n Turn Around Time: %fms\n\n", totalturn / (float)n);
-return 0;
+                j = quantum;
+                if ((p[i].burst - p[i].comp) > quantum)
+                {
+                    p[i].comp += quantum;
+                }
+                else
+                {
+                    p[i].wait = time - p[i].comp;
+                    j = p[i].burst - p[i].comp;
+                    p[i].comp = p[i].burst;
+                    p[i].f = 0;
+                }
+                printf("\nprocess # %-3d %-10d %-10d %-10d", i + 1, time, time + j, p[i].burst - p[i].comp);
+                time += j;
+            }
+        }
+    }
+    printf("\n\n------------------------------------");
+    printf("\nProcess \t Waiting Time TurnAround Time ");
+    for (i = 0; i < n; i++)
+    {
+        printf("\nProcess # %-12d%-15d%-15d", i + 1, p[i].wait, p[i].wait + p[i].burst);
+        totalwait = totalwait + p[i].wait;
+        totalturn = totalturn + p[i].wait + p[i].burst;
+    }
+    printf("\n\nAverage\n------------------------------------ ");
+    printf("\nWaiting Time: %fms", totalwait / (float)n);
+    printf("\n Turn Around Time: %fms\n\n", totalturn / (float)n);
+    return 0;
 }
